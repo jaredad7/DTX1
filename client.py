@@ -7,11 +7,6 @@ from yoctopuce.yocto_api import *
 from yoctopuce.yocto_voltage import *
 from yoctopuce.yocto_temperature import *
 
-# Require Device id as argument
-if len(sys.argv) != 3:
-    print("Please supply device id and password as arguments")
-    exit()
-
 # Initialize globals
 global read_speed
 read_speed = 5.0
@@ -117,11 +112,6 @@ YAPI.RegisterHub("usb")
 adc = Adafruit_ADS1x15.ADS1115()
 GAIN = 2
 PIN = 0
-
-# Register with the server
-my_id = sys.argv[1]
-password = sys.argv[2] #getpass.getpass(prompt="Password:", stream=None)
-secret = hashlib.sha224(my_id + password).hexdigest()
 
 # write to kinesis
 def single_turbine():
