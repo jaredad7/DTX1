@@ -131,7 +131,7 @@ def single_turbine():
             status = "OFFLINE"
 
         payload = {
-            'turbineId': 3,
+            'turbineId': "2",
             'windSpeed': wind,
             'voltage': volt,
             'temp': temp,
@@ -162,7 +162,7 @@ def all_turbines():
             status = "OFFLINE"
         
         payload2 = {
-            'turbineId': 3,
+            'turbineId': "2",
             'entire': "entire",
             'windSpeed': wind,
             'voltage': volt,
