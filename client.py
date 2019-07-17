@@ -127,7 +127,7 @@ def single_turbine():
         global temp
         temp = str(temp)
         status = "ONLINE"
-        if (volt == "err" or volt == "0.0"):
+        if (volt == "err" or temp == "err"):
             status = "OFFLINE"
 
         payload = {
@@ -144,7 +144,7 @@ def single_turbine():
             Data=json.dumps(payload),
             PartitionKey=ts)
 
-        time.sleep(read_speed)    
+        time.sleep(read_speed)
 
 def all_turbines():
     #print("sending all data")
@@ -158,7 +158,7 @@ def all_turbines():
         global temp
         temp = str(temp)
         status = "ONLINE"
-        if (volt == "err" or volt == "0.0"):
+        if (volt == "err" or temp == "err"):
             status = "OFFLINE"
         
         payload2 = {
