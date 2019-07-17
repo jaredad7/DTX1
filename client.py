@@ -100,8 +100,8 @@ def threadmonitor(threads):
 # MAIN
 
 # Define kinesis stream
-my_stream_name = 'dataline10'
-my_stream_name2 = 'allStream5'
+my_stream_name = 'dataline11'
+my_stream_name2 = 'allStream6'
 kinesis_client = boto3.client('kinesis', region_name='us-east-1')
 kinesis_client2 = boto3.client('kinesis', region_name='us-east-1')
 
