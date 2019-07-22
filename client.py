@@ -9,7 +9,7 @@ from yoctopuce.yocto_temperature import *
 
 # Initialize globals
 global read_speed
-read_speed = 5.0
+read_speed = 2.0
 global volt
 volt = 0
 global temp
@@ -30,7 +30,7 @@ def voltage():
         serial = sensor.get_module().get_serialNumber()
         sensorDC = YVoltage.FindVoltage(serial + '.voltage1')
         while sensor is not None:
-            volt = sensorDC.get_currentValue()
+            volt = abs(sensorDC.get_currentValue())
             time.sleep(read_speed / 2.0)
 #    print("volt received")
 #    volt = "err"
@@ -65,7 +65,7 @@ def windspeed_translation(digital_value):
 def windspeed():
     global wind
     global read_speed
-    wind = windspeed_translation(adc.read_adc(PIN, GAIN))
+    wind = abs(windspeed_translation(adc.read_adc(PIN, GAIN)))
     wind = str(wind)
     time.sleep(read_speed / 2.0)
 #    print("wind received")
@@ -100,8 +100,8 @@ def threadmonitor(threads):
 # MAIN
 
 # Define kinesis stream
-my_stream_name = 'dataline11'
-my_stream_name2 = 'allStream6'
+my_stream_name = 'dataline14'
+my_stream_name2 = 'allStream9'
 kinesis_client = boto3.client('kinesis', region_name='us-east-1')
 kinesis_client2 = boto3.client('kinesis', region_name='us-east-1')
 
@@ -131,12 +131,12 @@ def single_turbine():
             status = "OFFLINE"
 
         payload = {
-            'turbineId': "2",
+            'turbineId': int(2),
             'windSpeed': wind,
             'voltage': volt,
             'temp': temp,
             'status': status,
-            'recordTime': ts
+            'recordTime': ts+"b"
         }
 
         kinesis_client.put_record(
@@ -162,13 +162,13 @@ def all_turbines():
             status = "OFFLINE"
         
         payload2 = {
-            'turbineId': "2",
+            'turbineId': int(2),
             'entire': "entire",
             'windSpeed': wind,
             'voltage': volt,
             'temp': temp,
             'status': status,
-            'recordTime': ts+"c"
+            'recordTime': ts+"b"
         }
 
         kinesis_client2.put_record(
