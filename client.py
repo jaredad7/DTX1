@@ -9,7 +9,7 @@ from yoctopuce.yocto_temperature import *
 
 # Initialize globals
 global read_speed
-read_speed = 5.0
+read_speed = 2.0
 global volt
 volt = 0
 global temp
@@ -30,10 +30,10 @@ def voltage():
         serial = sensor.get_module().get_serialNumber()
         sensorDC = YVoltage.FindVoltage(serial + '.voltage1')
         while sensor is not None:
-            volt = sensorDC.get_currentValue()
+            volt = abs(sensorDC.get_currentValue())
             time.sleep(read_speed / 2.0)
-#    print("volt received")
-#    volt = "err"
+    print("volt received")
+    volt = "err"
 
 
 # Reads sensor temperature and writes to temp
@@ -47,8 +47,8 @@ def temperature():
         while sensor is not None:
             temp = sensorTemp.get_currentValue()
             time.sleep(read_speed / 2.0)
-#    print("temp received")
-#    temp = "err"
+    print("temp received")
+    temp = "err"
 
 
 # Translates voltage into windspeed
@@ -65,7 +65,7 @@ def windspeed_translation(digital_value):
 def windspeed():
     global wind
     global read_speed
-    wind = windspeed_translation(adc.read_adc(PIN, GAIN))
+    wind = abs(windspeed_translation(adc.read_adc(PIN, GAIN)))
     wind = str(wind)
     time.sleep(read_speed / 2.0)
 #    print("wind received")
@@ -100,8 +100,8 @@ def threadmonitor(threads):
 # MAIN
 
 # Define kinesis stream
-my_stream_name = 'dataline11'
-my_stream_name2 = 'allStream6'
+my_stream_name = 'dataline15'
+my_stream_name2 = 'allStream10'
 kinesis_client = boto3.client('kinesis', region_name='us-east-1')
 kinesis_client2 = boto3.client('kinesis', region_name='us-east-1')
 
@@ -118,6 +118,7 @@ def single_turbine():
     #print("sending single data")
     while True:
     #    ts = time.time()
+        print("Writing one")
         global read_speed
         ts = str(time.time())
         global wind
@@ -128,15 +129,16 @@ def single_turbine():
         temp = str(temp)
         status = "ONLINE"
         if (volt == "err" or temp == "err"):
+            print("Error found: turbine offline")
             status = "OFFLINE"
 
         payload = {
-            'turbineId': "2",
+            'turbineId': int(1),
             'windSpeed': wind,
             'voltage': volt,
             'temp': temp,
             'status': status,
-            'recordTime': ts
+            'recordTime': ts+"a"
         }
 
         kinesis_client.put_record(
@@ -149,6 +151,7 @@ def single_turbine():
 def all_turbines():
     #print("sending all data")
     while True:
+        print("Writing all")
         global read_speed
         ts = str(time.time())
         global wind
@@ -159,16 +162,17 @@ def all_turbines():
         temp = str(temp)
         status = "ONLINE"
         if (volt == "err" or temp == "err"):
+            print("Error found: turbine offline")
             status = "OFFLINE"
         
         payload2 = {
-            'turbineId': "2",
+            'turbineId': int(1),
             'entire': "entire",
             'windSpeed': wind,
             'voltage': volt,
             'temp': temp,
             'status': status,
-            'recordTime': ts+"c"
+            'recordTime': ts+"a"
         }
 
         kinesis_client2.put_record(
